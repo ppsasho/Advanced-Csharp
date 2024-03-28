@@ -24,7 +24,7 @@ namespace SearchableDocument
                         continue;
                 }
 
-                string word = GetInput("Enter the word you would like to search: ");
+                string word = GetInput("Enter the word you would like to search: ").Trim();
                 Console.WriteLine(searchable.Search(word));
 
                 switch(GetInput("Would you like to try searching again? (Y N): ").ToUpper())

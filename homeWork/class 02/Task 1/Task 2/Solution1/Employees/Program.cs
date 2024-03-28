@@ -1,6 +1,4 @@
-﻿using System.Net.Mail;
-
-namespace Employees
+﻿namespace Employees
 {
     internal class Program
     {
