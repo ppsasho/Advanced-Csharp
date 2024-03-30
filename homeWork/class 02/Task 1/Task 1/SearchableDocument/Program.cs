@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-namespace SearchableDocument
+﻿namespace SearchableDocument
 {
     internal class Program
     {
