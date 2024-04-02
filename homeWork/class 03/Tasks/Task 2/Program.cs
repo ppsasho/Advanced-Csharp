@@ -13,6 +13,11 @@
             Console.WriteLine(motorBike.DisplayInfo());
             Console.WriteLine(boat.DisplayInfo());
             Console.WriteLine(plane.DisplayInfo());
+            
+            Console.WriteLine("\n" + car.Drive());
+            Console.WriteLine(motorBike.Wheelie());
+            Console.WriteLine(boat.Sail());
+            Console.WriteLine(plane.Fly());
         }
     }
 }
