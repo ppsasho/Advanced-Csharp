@@ -8,7 +8,7 @@
 
         public override string Account()
         {
-            return $"{FirstName} {LastName} [user: {Username}] - Premium User";
+            return $"Info ~ {FirstName} {LastName} | [user: {Username}] - Premium User";
         }
 
         public override string Train()
