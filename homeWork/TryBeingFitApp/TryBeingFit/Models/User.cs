@@ -1,4 +1,6 @@
-﻿namespace Models
+﻿using Models.Enums;
+
+namespace Models
 {
     public abstract class User
     {
@@ -6,13 +8,15 @@
         public string LastName { get; set; }
         public string Username { get; set; }
         private string Password { get; set; }
+        public AccountType AccountType { get; set; }
 
-        public User(string firstName, string lastName, string username, string password)
+        public User(string firstName, string lastName, string username, string password, AccountType accountType)
         {
             FirstName = firstName;
             LastName = lastName;
             Username = username;
             SetPassword(password);
+            AccountType = accountType;
         }
 
         public void SetPassword(string password)
@@ -22,7 +26,13 @@
             if (!password.Any(x => char.IsNumber(x))) throw new ArgumentException("Password must contain at least one number.)");
             Password = password;
         }
-        public abstract string Account();
-        public abstract string Train();
+        public bool CheckPassword(string password)
+        {
+            if (Password.Equals(password)) return true; return false;
+        }
+        public string Account()
+        {
+            return $"{FirstName} {LastName} [user: {Username}] - {AccountType} User";
+        }
     }
 }

@@ -2,22 +2,8 @@
 {
     public class StandardUser : User
     {
-        public StandardUser(string firstName, string lastName, string username, string password) : base(firstName, lastName, username, password)
+        public StandardUser(string firstName, string lastName, string username, string password) : base(firstName, lastName, username, password, Enums.AccountType.Standard )
         {
         }
-
-        public override string Account()
-        {
-            return $"{FirstName} {LastName} [user: {Username}] - Standard User";
-        }
-
-        public override string Train()
-        {
-            return $"You({FirstName}) are training.";
-        }
-        //public string UpgradeToPremium()
-        //{
-
-        //}
     }
 }
