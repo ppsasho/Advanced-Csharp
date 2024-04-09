@@ -30,7 +30,7 @@ namespace Filtered_Results
 
             List<Car> top3Cars = new();
             var fastestCars = CarsData.Cars.OrderByDescending(x => x.AccelerationTime);
-            foreach (Car car in fastestCars) if(top3Cars.Count < 3) top3Cars.Add(car);
+            foreach (Car car in fastestCars) if (top3Cars.Count > 2) break; else top3Cars.Add(car);
             Console.WriteLine("Top 3 cars:");
             PrintCars(top3Cars);
 
