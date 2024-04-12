@@ -20,12 +20,13 @@
         public string DisplayRating()
         {
             if (Rating == 0) return $"There are no ratings yet.";
-            return Rating.ToString();
+            if (Rating > 5) return $"Rating: 5";
+            return $"Rating: {Rating}";
         }
         public void ChangeRating(decimal rating)
         {
             if (Rating == 0) Rating = rating;
-            else Rating += rating / 2;
+            else Rating = (Rating + rating) / 2;
         }
     }
 }
