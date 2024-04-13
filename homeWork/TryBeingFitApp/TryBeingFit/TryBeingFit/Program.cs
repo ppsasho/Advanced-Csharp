@@ -7,9 +7,6 @@ namespace TryBeingFit
     {
         static void Main(string[] args)
         {
-            //DateTime today = DateTime.Today;
-            //string date = today.AddHours(14).ToString();
-            //Console.WriteLine(date);
             while (!UI()) ;
         }
         static void DefaultOption()

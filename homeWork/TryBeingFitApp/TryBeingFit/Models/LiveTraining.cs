@@ -4,6 +4,7 @@
     {
         public User Trainer { get; set; }
         public DateTime Schedule {  get; set; }
+
         public List<User> Participants = new(){ };
 
         public LiveTraining(string link, string title, DateTime schedule, User trainer) : base(link, title, 0)
@@ -13,7 +14,10 @@
         }
         public void ReSchedule(DateTime newSchedule) 
         {
-            Schedule = newSchedule;
+            if(newSchedule > DateTime.Now)
+            {
+                Schedule = newSchedule;
+            }
         }
         public string GetRemainingTime()
         {

@@ -28,7 +28,11 @@ namespace Models
         }
         public bool CheckPassword(string password)
         {
-            if (Password.Equals(password)) return true; return false;
+            if (Password.Equals(password)) return true; 
+            
+            return false;
+
+            //return Password.Equals(password);
         }
         public string Account()
         {
