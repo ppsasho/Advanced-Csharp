@@ -12,12 +12,13 @@
             Schedule = schedule;
             Trainer = trainer;
         }
+        public string GetInfo()
+        {
+            return $"({Title}) - created by {Trainer.FirstName}\nParticipants: {string.Join('\n', Participants.Select(x => x.Username))}";
+        }
         public void ReSchedule(DateTime newSchedule) 
         {
-            if(newSchedule > DateTime.Now)
-            {
                 Schedule = newSchedule;
-            }
         }
         public string GetRemainingTime()
         {
