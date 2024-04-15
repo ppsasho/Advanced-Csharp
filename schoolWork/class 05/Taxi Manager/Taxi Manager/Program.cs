@@ -1,5 +1,6 @@
 ﻿using DataAcess;
-using Models;
+using Services.Implementations;
+using Services.Interfaces;
 
 namespace Taxi_Manager
 {
@@ -7,11 +8,11 @@ namespace Taxi_Manager
     {
         static void Main(string[] args)
         {
-            Storage.Users.Add(new User(0, "Sasho", "Popovski", "ppsasho", Models.Enum.RoleEnum.Admin, "sashopp1234"));
+            IUIService uiService = new UIService();
 
-            var users = Storage.Users.GetAll();
-            foreach (var user in users) Console.WriteLine(user.Username);
-            var cars = Storage.Cars.GetAll();
+            uiService.Login();
+
+            var loggedInUser = CurrentSession.User;
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Models
     {
         public static void DefaultOption()
         {
+            Console.Clear();
             Console.WriteLine("Please make sure you choose one of the options.");
         }
         public static string GetVideoTrainings()
@@ -61,7 +62,6 @@ namespace Models
                         Console.Clear();
                         return LiveTrain(user);
                     default:
-                        Console.Clear();
                         DefaultOption();
                         continue;
                 }
@@ -96,7 +96,6 @@ namespace Models
                         break;
 
                     default:
-                        Console.Clear();
                         DefaultOption();
                         continue;
                 }
@@ -112,7 +111,7 @@ namespace Models
                     if (number < 1 || number > 5)
                     {
                         Console.Clear();
-                        Console.WriteLine("Please make sure your rating's not greater than 5 and lesser than 1");
+                        Console.WriteLine("Please make sure your rating's not greater than 5 or lesser than 1");
                         continue;
                     }
                     return number;
@@ -163,13 +162,11 @@ namespace Models
                         Console.Clear();
                         return TrainerLogIn(trainer, Welcome(trainer));
                     default:
-                        Console.Clear();
                         DefaultOption();
                         continue;
                 }
             }
         }
-
         public static bool RescheduleTraining(User trainer)
         {
             while (true)
@@ -293,7 +290,6 @@ namespace Models
                                 Console.Clear();
                                 return false;
                             default:
-                                Console.Clear();
                                 DefaultOption();
                                 continue;
                         }
@@ -324,7 +320,6 @@ namespace Models
                                 case "2":
                                     return LiveTrain(user);
                                 default:
-                                    Console.Clear();
                                     DefaultOption();
                                     continue;
                             }
@@ -340,7 +335,6 @@ namespace Models
                                 Console.Clear();
                                 return false;
                             default:
-                                Console.Clear();
                                 DefaultOption();
                                 continue;
                         }
@@ -349,7 +343,6 @@ namespace Models
                         Console.WriteLine("Thanks for using Try Being Fit!");
                         return false;
                     default:
-                        Console.Clear();
                         DefaultOption();
                         continue;
                 }
@@ -373,7 +366,6 @@ namespace Models
                             return CreateLiveTraining(trainer);
 
                         default:
-                            Console.Clear();
                             DefaultOption();
                             continue;
                     }
@@ -424,7 +416,6 @@ namespace Models
                                 Console.Clear();
                                 return false;
                             default:
-                                Console.Clear();
                                 DefaultOption();
                                 continue;
                         }
@@ -436,7 +427,6 @@ namespace Models
                             case "2":
                                 return LiveTrain(trainer);
                             default:
-                                Console.Clear();
                                 DefaultOption();
                                 continue;
                         }
@@ -447,7 +437,6 @@ namespace Models
                         Console.WriteLine("Thanks for using Try being fit!");
                         return UI();
                     default:
-                        Console.Clear();
                         DefaultOption();
                         continue;
                 }
@@ -610,7 +599,6 @@ namespace Models
                         }
                         break;
                     default:
-                        Console.Clear();
                         DefaultOption();
                         continue;
                 }
