@@ -27,11 +27,11 @@
             LiveTrainings = new List<LiveTraining> {};
             VideoTrainings = new List<VideoTraining>()
             {
-                new("https://www.youtube.com/watch?v=abcdefg12345", "Upper Body workout", 1),
-                new("https://www.youtube.com/watch?v=qwerty09876", " Lower Body workout", 2),
-                new("https://www.youtube.com/watch?v=zyxwvuts7654", "Core Body workout", 3),
-                new("https://www.youtube.com/watch?v=0987poiuytre", "Cardio workout", 4),
-                new("https://www.youtube.com/watch?v=mnbvcxz43210", "Flexibility workout", 5)
+                new("https://www.youtube.com/watch?v=abcdefg12345", "Upper Body workout\t", 1),
+                new("https://www.youtube.com/watch?v=qwerty09876", "Lower Body workout\t", 2),
+                new("https://www.youtube.com/watch?v=zyxwvuts7654", "Core Body workout\t", 3),
+                new("https://www.youtube.com/watch?v=0987poiuytre", "Cardio workout\t\t", 4),
+                new("https://www.youtube.com/watch?v=mnbvcxz43210", "Flexibility workout\t", 5)
             };
             Trainers = new List<Trainer>()
             {

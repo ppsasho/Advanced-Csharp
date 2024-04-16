@@ -35,7 +35,7 @@ namespace Models
                 }
             }
             string result = string.Empty;
-            foreach (var training in Data.LiveTrainings) result += $"(\nID: {training.Id})\t[{training.Title}] {training.GetRemainingTime()}\n";
+            foreach (var training in Data.LiveTrainings) result += $"\n(ID: {training.Id})\t[{training.Title}] {training.GetRemainingTime()}\n";
             return result;
         }
         public static bool MoreLiveInfo(User user)
