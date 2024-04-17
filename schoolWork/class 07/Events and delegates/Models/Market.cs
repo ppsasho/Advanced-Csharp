@@ -3,9 +3,10 @@
     public class Market
     {
         public delegate void PromotionDelegate(Product p, int newPrice);
-        public string Name { get; set; }
-        public List<Product> Products { get; set; }
-        public event PromotionDelegate Subscribers;//NotifyUsers
+        public string? Name { get; set; }
+        public List<Product>? Products { get; set; }
+
+        public event PromotionDelegate? Subscribers;//NotifyUsers
         public void Subscribe(PromotionDelegate func) 
         {
             if (Subscribers == null)
