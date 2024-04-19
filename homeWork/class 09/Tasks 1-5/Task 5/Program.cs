@@ -16,7 +16,7 @@
                 Console.WriteLine($"Calculation no.{i + 1}");
                 int a = GetNumber("Enter your first number:");
                 int b = GetNumber("Enter your second number:");
-                string result = Sum(a, b);
+                string result = $"{Sum(a, b)} Solved at: {DateTime.UtcNow}";
                 Console.Clear();
 
                 Console.WriteLine(result);
