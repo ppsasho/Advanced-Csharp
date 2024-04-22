@@ -382,64 +382,6 @@ namespace Models
             }
         }
 
-        public static bool SignIn(string accountType)
-        {
-            while (true)
-            {
-                string username = UserServices.GetInput("Enter your username:");
-                if (username.Length < 6)
-                {
-                    Console.WriteLine("The username you entered is shorter than the minimal requirement(6 chrs)");
-                    continue;
-                }
-                if (accountType == "trainer")
-                {
-                    if (!Data.Trainers.Any(x => x.Username == username))
-                    {
-                        Console.WriteLine("No trainers with that username exist!");
-                        continue;
-                    }
-                }
-                else if (!Data.Users.Any(x => x.Username == username.Trim()))
-                {
-                    Console.WriteLine("This username doesn't exist!");
-                    continue;
-                }
-
-                while (true)
-                {
-                    string password = UserServices.GetInput("Enter your password:");
-                    if (accountType == "trainer")
-                    {
-                        if (Data.Trainers.Any(x => x.Username == username && x.CheckPassword(password)))
-                        {
-                            Trainer trainer = Data.Trainers.First(x => x.Username.Equals(username));
-                            Console.Clear();
-                            return TrainerLogIn(trainer, Welcome(trainer));
-                        }
-                    }
-                    else if (Data.Users.Any(x => x.Username == username && x.CheckPassword(password)))
-                    {
-                        User user = Data.Users.First(x => x.Username.Equals(username));
-                        switch (user.AccountType)
-                        {
-                            case AccountType.Standard:
-                                return StandardLogIn(user, Welcome(user));
-                            case AccountType.Premium:
-                                return PremiumLogIn(user, Welcome(user));
-                        }
-                    }
-                    else
-                    {
-                        Console.Clear();
-                        Console.WriteLine("The password you entered is incorrect.");
-                        continue;
-                    }
-                }
-
-            }
-        }
-
         public static bool Register()
         {
             while (true)
@@ -541,6 +483,64 @@ namespace Models
                         DefaultOption();
                         continue;
                 }
+            }
+        }
+
+        public static bool SignIn(string accountType)
+        {
+            while (true)
+            {
+                string username = UserServices.GetInput("Enter your username:");
+                if (username.Length < 6)
+                {
+                    Console.WriteLine("The username you entered is shorter than the minimal requirement(6 chrs)");
+                    continue;
+                }
+                if (accountType == "trainer")
+                {
+                    if (!Data.Trainers.Any(x => x.Username == username))
+                    {
+                        Console.WriteLine("No trainers with that username exist!");
+                        continue;
+                    }
+                }
+                else if (!Data.Users.Any(x => x.Username == username.Trim()))
+                {
+                    Console.WriteLine("This username doesn't exist!");
+                    continue;
+                }
+
+                while (true)
+                {
+                    string password = UserServices.GetInput("Enter your password:");
+                    if (accountType == "trainer")
+                    {
+                        if (Data.Trainers.Any(x => x.Username == username && x.CheckPassword(password)))
+                        {
+                            Trainer trainer = Data.Trainers.First(x => x.Username.Equals(username));
+                            Console.Clear();
+                            return TrainerLogIn(trainer, Welcome(trainer));
+                        }
+                    }
+                    else if (Data.Users.Any(x => x.Username == username && x.CheckPassword(password)))
+                    {
+                        User user = Data.Users.First(x => x.Username.Equals(username));
+                        switch (user.AccountType)
+                        {
+                            case AccountType.Standard:
+                                return StandardLogIn(user, Welcome(user));
+                            case AccountType.Premium:
+                                return PremiumLogIn(user, Welcome(user));
+                        }
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("The password you entered is incorrect.");
+                        continue;
+                    }
+                }
+
             }
         }
     }
