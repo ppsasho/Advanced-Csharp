@@ -10,21 +10,21 @@ namespace Models
             Console.WriteLine("Please make sure you choose one of the options.");
         }
 
-        public static string GetLiveTrainings(User user)
+        public static string GetLiveTrainings()
         {
             if (!Data.LiveTrainings.Any())
             {
                 Console.WriteLine($"There are no live trainings scheduled, please check again later.");
-                switch (user.AccountType)
+                switch (CurrentSession.User.AccountType)
                 {
                     case AccountType.Standard:
-                        StandardLogIn(user, Welcome(user));
+                        StandardLogIn();
                         break;
                     case AccountType.Premium:
-                        PremiumLogIn(user, Welcome(user));
+                        PremiumLogIn();
                         break;
                     case AccountType.Trainer:
-                        TrainerLogIn(user, Welcome(user));
+                        TrainerLogIn();
                         break;
                 }
             }
@@ -32,8 +32,9 @@ namespace Models
             foreach (var training in Data.LiveTrainings) result += $"\n(ID: {training.Id})\t[{training.Title}] {training.GetRemainingTime()}\n";
             return result;
         }
-        public static bool MoreLiveInfo(User user)
+        public static bool MoreLiveInfo()
         {
+            User user = CurrentSession.User;
             while (true)
             {
                 int id = UserServices.GetNumber("Enter the id of the live training that you want to participate in:");
@@ -51,10 +52,10 @@ namespace Models
                         Data.LiveTrainings[Data.LiveTrainings.IndexOf(live)].Participants.Add(user);
                         Console.Clear();
                         Console.WriteLine("You have been added to the live training successfully!");
-                        return LiveTrain(user);
+                        return LiveTrain();
                     case "2":
                         Console.Clear();
-                        return LiveTrain(user);
+                        return LiveTrain();
                     default:
                         DefaultOption();
                         continue;
@@ -62,30 +63,31 @@ namespace Models
 
             }
         }
-        public static bool LiveTrain(User user)
+        public static bool LiveTrain()
         {
+            User user = CurrentSession.User;
             while (true)
             {
-                Console.WriteLine(GetLiveTrainings(user));
+                Console.WriteLine(GetLiveTrainings());
                 switch (UserServices.GetInput("Would you like to:\n1) Participate in a live training\n2) Go back to your profile"))
                 {
                     case "1":
-                        return MoreLiveInfo(user);
+                        return MoreLiveInfo();
 
                     case "2":
                         switch (user.AccountType)
                         {
                             case AccountType.Standard:
                                 Console.Clear();
-                                return StandardLogIn(user, Welcome(user));
+                                return StandardLogIn();
 
                             case AccountType.Premium:
                                 Console.Clear();
-                                return PremiumLogIn(user, Welcome(user));
+                                return PremiumLogIn();
 
                             case AccountType.Trainer:
                                 Console.Clear();
-                                return TrainerLogIn(user, Welcome(user));
+                                return TrainerLogIn();
                         }
                         break;
 
@@ -97,8 +99,9 @@ namespace Models
         }
 
         
-        public static bool CreateLiveTraining(User trainer)
+        public static bool CreateLiveTraining()
         {
+            User trainer = CurrentSession.User;
             while (true)
             {
                 string title = UserServices.GetInput("Enter the title for your training:");
@@ -114,15 +117,16 @@ namespace Models
                         continue;
                     case "2":
                         Console.Clear();
-                        return TrainerLogIn(trainer, Welcome(trainer));
+                        return TrainerLogIn();
                     default:
                         DefaultOption();
                         continue;
                 }
             }
         }
-        public static bool RescheduleTraining(User trainer)
+        public static bool RescheduleTraining()
         {
+            User trainer = CurrentSession.User;
             while (true)
             {
                 var trainerLiveTrainings = Data.LiveTrainings.Where(x => x.Trainer.Username.Equals(trainer.Username));
@@ -131,9 +135,9 @@ namespace Models
                     switch (UserServices.GetInput("There are no live training made by you, would you like to:\n1) Create a live training\n2) Go back to your profile"))
                     {
                         case "1":
-                            return CreateLiveTraining(trainer);
+                            return CreateLiveTraining();
                         case "2":
-                            return TrainerLogIn(trainer, Welcome(trainer));
+                            return TrainerLogIn();
                         default:
                             DefaultOption();
                             continue;
@@ -159,7 +163,7 @@ namespace Models
                     case "2":
                     default:
                         Console.Clear();
-                        return TrainerLogIn(trainer, Welcome(trainer));
+                        return TrainerLogIn();
                 }
             }
         }
@@ -200,24 +204,26 @@ namespace Models
             return false;
         }
         
-        public static string Welcome(User user)
+        public static string Welcome()
         {
-            return $"Welcome {user.FirstName}!";
+            return $"Welcome {CurrentSession.User.FirstName}!";
         }
 
-        public static bool StandardLogIn(User user, string welcome)
+        public static bool StandardLogIn()
         {
+            User user = CurrentSession.User;
             while (true)
             {
-                Console.WriteLine(welcome);
+                Console.WriteLine(Welcome());
                 switch (UserServices.GetInput("Would you like to:\n1) Train\n2) Upgrade to premium\n3) Account\n4) Log out"))
                 {
                     case "1":
                         Console.Clear();
-                        return VideoTrain(user);
+                        return VideoTrain();
                     case "2":
                         Console.Clear();
-                        return PremiumLogIn(UserServices.UpgradeUser(user), Welcome(user));
+                        UserServices.UpgradeUser();
+                        return PremiumLogIn();
                     case "3":
                         Console.WriteLine(user.Account());
                         switch (UserServices.GetInput("Would you like to:\n1) Go back\n2) Log out"))
@@ -226,6 +232,7 @@ namespace Models
                                 Console.Clear();
                                 continue;
                             case "2":
+                                CurrentSession.User = null;
                                 Console.Clear();
                                 return false;
                             default:
@@ -242,11 +249,12 @@ namespace Models
             }
         }
 
-        public static bool PremiumLogIn(User user, string welcome)
+        public static bool PremiumLogIn()
         {
+            User user = CurrentSession.User;
             while (true)
             {
-                Console.WriteLine(welcome);
+                Console.WriteLine(Welcome());
                 switch (UserServices.GetInput("Would you like to:\n1) Train\n2) Account\n3) Log out"))
                 {
                     case "1":
@@ -255,9 +263,9 @@ namespace Models
                             switch (UserServices.GetInput("Would you like to go to:\n1) Video trainings\n2) Live trainings"))
                             {
                                 case "1":
-                                    return VideoTrain(user);
+                                    return VideoTrain();
                                 case "2":
-                                    return LiveTrain(user);
+                                    return LiveTrain();
                                 default:
                                     DefaultOption();
                                     continue;
@@ -271,6 +279,7 @@ namespace Models
                                 Console.Clear();
                                 continue;
                             case "2":
+                                CurrentSession.User = null;
                                 Console.Clear();
                                 return false;
                             default:
@@ -287,8 +296,9 @@ namespace Models
                 }
             }
         }
-        public static bool StartLiveTraining(User trainer)
+        public static bool StartLiveTraining()
         {
+            User trainer = CurrentSession.User;
             var trainerTrainings = Data.LiveTrainings.Where(x => x.Trainer.Username.Equals(trainer.Username)).ToList();
             while (true)
             {
@@ -298,18 +308,18 @@ namespace Models
                     {
                         case "1":
                             Console.Clear();
-                            return CreateLiveTraining(trainer);
+                            return CreateLiveTraining();
 
                         case "2":
                             Console.Clear();
-                            return CreateLiveTraining(trainer);
+                            return CreateLiveTraining();
 
                         default:
                             DefaultOption();
                             continue;
                     }
                 }
-                Console.WriteLine(GetLiveTrainings(trainer));
+                Console.WriteLine(GetLiveTrainings());
                 int id = UserServices.GetNumber("Enter the id of the live training that you would like to start");
                 if (!Data.LiveTrainings.Any(x => x.Id.Equals(id)))
                 {
@@ -325,7 +335,7 @@ namespace Models
                 {
                     case "1":
                         Console.Clear();
-                        return TrainerLogIn(trainer, Welcome(trainer));
+                        return TrainerLogIn();
                     case "2":
                     default:
                         Console.Clear();
@@ -333,17 +343,18 @@ namespace Models
                 }
             }
         }
-        public static bool TrainerLogIn(User trainer, string welcome)
+        public static bool TrainerLogIn()
         {
+            User trainer = CurrentSession.User;
             while (true)
             {
-                Console.WriteLine(welcome);
+                Console.WriteLine(Welcome());
                 switch (UserServices.GetInput("Would you like to:\n1) Create a live training\n2) Reschedule a live training\n3) Account\n4) Train\n5) Start a live training\n6) Log out"))
                 {
                     case "1":
-                        return CreateLiveTraining(trainer);
+                        return CreateLiveTraining();
                     case "2":
-                        return RescheduleTraining(trainer);
+                        return RescheduleTraining();
                     case "3":
                         Console.WriteLine(trainer.Account());
                         switch (UserServices.GetInput("Would you like to:\n1) Go back\n2) Log out"))
@@ -352,6 +363,7 @@ namespace Models
                                 Console.Clear();
                                 continue;
                             case "2":
+                                CurrentSession.User = null;
                                 Console.Clear();
                                 return false;
                             default:
@@ -362,15 +374,15 @@ namespace Models
                         switch (UserServices.GetInput("Would you like to train using:\n1) Video trainings\n2) Live trainings "))
                         {
                             case "1":
-                                return VideoTrain(trainer);
+                                return VideoTrain();
                             case "2":
-                                return LiveTrain(trainer);
+                                return LiveTrain();
                             default:
                                 DefaultOption();
                                 continue;
                         }
                     case "5":
-                        return StartLiveTraining(trainer);
+                        return StartLiveTraining();
                     case "6":
                         Console.Clear();
                         Console.WriteLine("Thanks for using Try being fit!");
@@ -391,7 +403,7 @@ namespace Models
                 if (firstName.Length < 2 || lastName.Length < 2)
                 {
                     Console.Clear();
-                    Console.WriteLine("Your names must not be shorter than 2 chrs");
+                    Console.WriteLine("Your name must not be shorter than 2 chrs");
                     continue;
                 }
                 while (true)
@@ -414,7 +426,8 @@ namespace Models
                     {
                         case "Y":
                             Console.Clear();
-                            return StandardLogIn(user, Welcome(user));
+                            CurrentSession.Set(user);
+                            return StandardLogIn();
                         case "N":
                             Console.Clear();
                             return false;
@@ -423,8 +436,9 @@ namespace Models
 
             }
         }
-        public static bool MoreVideoInfo(VideoTraining video, User user)
+        public static bool MoreVideoInfo(VideoTraining video)
         {
+            User user = CurrentSession.User;
             while (true)
             {
                 Console.WriteLine(video.GetInfo());
@@ -436,18 +450,19 @@ namespace Models
                         Data.VideoTrainings[index].ChangeRating(rating);
                         Console.Clear();
                         Console.WriteLine($"Thanks for taking the time to give ({video.Title}) a rating!");
-                        return VideoTrain(user);
+                        return VideoTrain();
                     case "2":
                         Console.Clear();
-                        return VideoTrain(user);
+                        return VideoTrain();
                     default:
                         DefaultOption();
                         continue;
                 }
             }
         }
-        public static bool VideoTrain(User user)
+        public static bool VideoTrain()
         {
+            User user = CurrentSession.User;
             while (true)
             {
                 Console.WriteLine("Videos:\n");
@@ -466,17 +481,17 @@ namespace Models
                         {
                             VideoTraining video = Data.VideoTrainings.First(x => x.Id.Equals(id));
                             Console.Clear();
-                            return MoreVideoInfo(video, user);
+                            return MoreVideoInfo(video);
                         }
                     case "2":
                         switch (user.AccountType)
                         {
                             case AccountType.Standard:
-                                return StandardLogIn(user, Welcome(user));
+                                return StandardLogIn();
                             case AccountType.Premium:
-                                return PremiumLogIn(user, Welcome(user));
+                                return PremiumLogIn();
                             case AccountType.Trainer:
-                                return TrainerLogIn(user, Welcome(user));
+                                return TrainerLogIn();
                         }
                         break;
                     default:
@@ -519,18 +534,20 @@ namespace Models
                         {
                             Trainer trainer = Data.Trainers.First(x => x.Username.Equals(username));
                             Console.Clear();
-                            return TrainerLogIn(trainer, Welcome(trainer));
+                            CurrentSession.Set(trainer);
+                            return TrainerLogIn();
                         }
                     }
                     else if (Data.Users.Any(x => x.Username == username && x.CheckPassword(password)))
                     {
                         User user = Data.Users.First(x => x.Username.Equals(username));
+                        CurrentSession.Set(user);
                         switch (user.AccountType)
                         {
                             case AccountType.Standard:
-                                return StandardLogIn(user, Welcome(user));
+                                return StandardLogIn();
                             case AccountType.Premium:
-                                return PremiumLogIn(user, Welcome(user));
+                                return PremiumLogIn();
                         }
                     }
                     else

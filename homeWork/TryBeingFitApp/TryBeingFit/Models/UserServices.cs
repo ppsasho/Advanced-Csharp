@@ -14,11 +14,10 @@ namespace Models
                 Console.WriteLine("Please don't leave empty inputs!");
             }
         }
-        public static User UpgradeUser(User user)
+        public static void UpgradeUser()
         {
-            user.AccountType = AccountType.Premium;
+            CurrentSession.User.AccountType = AccountType.Premium;
             Console.WriteLine("You were successfully upgraded to premium!");
-            return user;
         }
         public static decimal GetRating(string msg)
         {
