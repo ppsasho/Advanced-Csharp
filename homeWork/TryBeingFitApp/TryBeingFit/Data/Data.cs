@@ -1,4 +1,5 @@
 ﻿namespace Models
+   
 {
     public static class Data
     {
