@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Threads
+﻿namespace Threads
 {
     internal class Program
     {
@@ -8,11 +6,12 @@ namespace Threads
         {
             SendMessagesWithThreads();
         }
+        //Manual threads
         static void SendMessagesWithThreads()
         {
             Console.WriteLine("Getting ready..");
             Thread.Sleep(2000);
-            Thread myThread = new Thread(() =>
+            Thread myThread = new(() =>
             {
                 Thread.Sleep(2000);
                 Console.WriteLine("First msg.");
