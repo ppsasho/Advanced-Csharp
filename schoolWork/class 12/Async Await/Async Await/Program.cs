@@ -9,7 +9,7 @@
         }
         static async Task MainThread()
         {
-            await SendMessageAsync("Hello there");
+            SendMessageAsync("Hello there");
             ShowAd("Computer");
         }
 
@@ -28,7 +28,7 @@
             await Task.Run(() =>
             {
                 Thread.Sleep(1500);
-                Console.WriteLine($"The message ({msg}) was send");
+                Console.WriteLine($"The message ({msg}) was sent");
             });
         }
         static void PrintInColor(string msg, ConsoleColor color)
