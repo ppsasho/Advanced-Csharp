@@ -1,4 +1,5 @@
 ﻿using Models.Enums;
+using Storage;
 
 namespace Models
 {
@@ -12,7 +13,9 @@ namespace Models
 
         public static string GetLiveTrainings()
         {
-            if (!Data.LiveTrainings.Any())
+            var storage = new Data2();
+            var liveTrainings = storage.ReadLiveTrainings();
+            if (!liveTrainings.Any())
             {
                 Console.WriteLine($"There are no live trainings scheduled, please check again later.");
                 switch (CurrentSession.User.AccountType)
@@ -29,27 +32,30 @@ namespace Models
                 }
             }
             string result = string.Empty;
-            foreach (var training in Data.LiveTrainings) result += $"\n(ID: {training.Id})\t[{training.Title}] {training.GetRemainingTime()}\n";
+            foreach (var training in liveTrainings) result += $"\n(ID: {training.Id})\t[{training.Title}] {training.GetRemainingTime()}\n";
             return result;
         }
         public static bool MoreLiveInfo()
         {
             User user = CurrentSession.User;
+            var storage = new Data2();
+            var liveTrainings = storage.ReadLiveTrainings();
             while (true)
             {
                 int id = UserServices.GetNumber("Enter the id of the live training that you want to participate in:");
-                if (!Data.LiveTrainings.Any(x => x.Id.Equals(id)))
+                if (!liveTrainings.Any(x => x.Id.Equals(id)))
                 {
                     Console.WriteLine("The id you entered doesn't exist in the list of live trainings");
                     continue;
                 }
 
-                LiveTraining live = Data.LiveTrainings.First(x => x.Id.Equals(id));
+                LiveTraining live = liveTrainings.First(x => x.Id.Equals(id));
                 Console.WriteLine(live.GetInfo());
                 switch (UserServices.GetInput("Do you want to:\n1) Get added to the participants list?\n2) Go back to the Live trainings menu"))
                 {
                     case "1":
-                        Data.LiveTrainings[Data.LiveTrainings.IndexOf(live)].Participants.Add(user);
+                        liveTrainings[liveTrainings.IndexOf(live)].Participants.Add(user);
+                        storage.Update(live);
                         Console.Clear();
                         Console.WriteLine("You have been added to the live training successfully!");
                         return LiveTrain();
@@ -102,6 +108,7 @@ namespace Models
         public static bool CreateLiveTraining()
         {
             User trainer = CurrentSession.User;
+            var storage = new Data2();
             while (true)
             {
                 string title = UserServices.GetInput("Enter the title for your training:");
@@ -109,7 +116,7 @@ namespace Models
                 DateTime date = UserServices.GetDateTime("Enter the date for your live training(dd/MM/yyyy HH:mm:ss):");
 
                 LiveTraining live = new(link, title, date, trainer);
-                Data.AddLive(live);
+                storage.AddLive(live);
                 switch (UserServices.GetInput("Would you like to:\n1) Create another live training\n2) Go back to your profile"))
                 {
                     case "1":
@@ -127,9 +134,11 @@ namespace Models
         public static bool RescheduleTraining()
         {
             User trainer = CurrentSession.User;
+            var storage = new Data2();
+            var liveTrainings = storage.ReadLiveTrainings();
             while (true)
             {
-                var trainerLiveTrainings = Data.LiveTrainings.Where(x => x.Trainer.Username.Equals(trainer.Username));
+                var trainerLiveTrainings = liveTrainings.Where(x => x.Trainer.Username.Equals(trainer.Username));
                 if (!trainerLiveTrainings.Any())
                 {
                     switch (UserServices.GetInput("There are no live training made by you, would you like to:\n1) Create a live training\n2) Go back to your profile"))
@@ -152,7 +161,8 @@ namespace Models
                     continue;
                 }
                 LiveTraining live = trainerLiveTrainings.First(x => x.Id.Equals(id));
-                Data.LiveTrainings[Data.LiveTrainings.IndexOf(live)].ReSchedule(UserServices.GetDateTime("Enter the new date for your training.\nPlease follow this format (dd/MM/yyyy HH:mm:ss):"));
+                liveTrainings[liveTrainings.IndexOf(live)].ReSchedule(UserServices.GetDateTime("Enter the new date for your training.\nPlease follow this format (dd/MM/yyyy HH:mm:ss):"));
+                storage.Update(live);
                 Console.WriteLine("Training successfully rescheduled");
                 switch (UserServices.GetInput("Would you like to:\n1) Reschula a live training again\n2) Go back to your profile"))
                 {
@@ -299,7 +309,9 @@ namespace Models
         public static bool StartLiveTraining()
         {
             User trainer = CurrentSession.User;
-            var trainerTrainings = Data.LiveTrainings.Where(x => x.Trainer.Username.Equals(trainer.Username)).ToList();
+            var storage = new Data2();
+            var liveTrainings = storage.ReadLiveTrainings();
+            var trainerTrainings = liveTrainings.Where(x => x.Trainer.Username.Equals(trainer.Username)).ToList();
             while (true)
             {
                 if (trainerTrainings.Count < 1)
@@ -321,16 +333,17 @@ namespace Models
                 }
                 Console.WriteLine(GetLiveTrainings());
                 int id = UserServices.GetNumber("Enter the id of the live training that you would like to start");
-                if (!Data.LiveTrainings.Any(x => x.Id.Equals(id)))
+                if (!liveTrainings.Any(x => x.Id.Equals(id)))
                 {
                     Console.Clear();
                     Console.WriteLine("The Id entered doesn't exist in the current list of live trainings, please try again.");
                     continue;
                 }
-                LiveTraining live = Data.LiveTrainings.First(x => x.Id.Equals(id));
+                LiveTraining live = liveTrainings.First(x => x.Id.Equals(id));
                 Console.WriteLine("Live training started.");
                 Console.WriteLine(live.GetInfo());
-                Data.LiveTrainings.Remove(live);
+                liveTrainings.Remove(live);
+                storage.SaveItems(liveTrainings);
                 switch (UserServices.GetInput("Would you like to:\n1) Go back to your profile\n2) Start another live training"))
                 {
                     case "1":
@@ -396,6 +409,8 @@ namespace Models
 
         public static bool Register()
         {
+            var storage = new Data2();
+            var users = storage.ReadUsers();
             while (true)
             {
                 string firstName = UserServices.GetInput("Enter your first name:");
@@ -414,13 +429,13 @@ namespace Models
                         Console.WriteLine("Your username must contain at least 6 chrs.");
                         continue;
                     }
-                    else if (Data.Users.Any(x => x.Username == username))
+                    else if (users.Any(x => x.Username == username))
                     {
                         Console.WriteLine("That username already exists!");
                         continue;
                     }
                     User user = new StandardUser(firstName, lastName, username, UserServices.GetInput("Enter your new password (Make sure theres at least 6 characters including a number)"));
-                    Data.Users.Add(user);
+                    storage.AddUser(user);
                     Console.WriteLine("User successfully created!");
                     switch (UserServices.GetInput("Would you like to login with your new account? (Y N)").ToUpper())
                     {
@@ -446,8 +461,8 @@ namespace Models
                 {
                     case "1":
                         decimal rating = UserServices.GetRating("Enter a rating for the video (1 to 5)");
-                        int index = Data.VideoTrainings.IndexOf(video);
-                        Data.VideoTrainings[index].ChangeRating(rating);
+                        int index = Data2.VideoTrainings.IndexOf(video);
+                        Data2.VideoTrainings[index].ChangeRating(rating);
                         Console.Clear();
                         Console.WriteLine($"Thanks for taking the time to give ({video.Title}) a rating!");
                         return VideoTrain();
@@ -471,7 +486,7 @@ namespace Models
                 {
                     case "1":
                         int id = UserServices.GetNumber("Enter the id of the video that you want to see.");
-                        if (!Data.VideoTrainings.Any(x => x.Id == id))
+                        if (!Data2.VideoTrainings.Any(x => x.Id == id))
                         {
                             Console.Clear();
                             Console.WriteLine("Please make sure you enter one of the video id's shown below!");
@@ -479,7 +494,7 @@ namespace Models
                         }
                         else
                         {
-                            VideoTraining video = Data.VideoTrainings.First(x => x.Id.Equals(id));
+                            VideoTraining video = Data2.VideoTrainings.First(x => x.Id.Equals(id));
                             Console.Clear();
                             return MoreVideoInfo(video);
                         }
@@ -505,6 +520,8 @@ namespace Models
         {
             while (true)
             {
+                var storage = new Data2();
+                var users = storage.ReadUsers();
                 string username = UserServices.GetInput("Enter your username:");
                 if (username.Length < 6)
                 {
@@ -513,13 +530,13 @@ namespace Models
                 }
                 if (accountType == "trainer")
                 {
-                    if (!Data.Trainers.Any(x => x.Username == username))
+                    if (!Data2.Trainers.Any(x => x.Username == username))
                     {
                         Console.WriteLine("No trainers with that username exist!");
                         continue;
                     }
                 }
-                else if (!Data.Users.Any(x => x.Username == username.Trim()))
+                else if (!users.Any(x => x.Username == username.Trim()))
                 {
                     Console.WriteLine("This username doesn't exist!");
                     continue;
@@ -530,17 +547,17 @@ namespace Models
                     string password = UserServices.GetInput("Enter your password:");
                     if (accountType == "trainer")
                     {
-                        if (Data.Trainers.Any(x => x.Username == username && x.CheckPassword(password)))
+                        if (Data2.Trainers.Any(x => x.Username == username && x.CheckPassword(password)))
                         {
-                            Trainer trainer = Data.Trainers.First(x => x.Username.Equals(username));
+                            Trainer trainer = Data2.Trainers.First(x => x.Username.Equals(username));
                             Console.Clear();
                             CurrentSession.Set(trainer);
                             return TrainerLogIn();
                         }
                     }
-                    else if (Data.Users.Any(x => x.Username == username && x.CheckPassword(password)))
+                    else if (users.Any(x => x.Username == username && x.CheckPassword(password)))
                     {
-                        User user = Data.Users.First(x => x.Username.Equals(username));
+                        User user = users.First(x => x.Username.Equals(username));
                         CurrentSession.Set(user);
                         switch (user.AccountType)
                         {

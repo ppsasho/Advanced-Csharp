@@ -1,4 +1,5 @@
 ﻿using Models.Enums;
+using Storage;
 
 namespace Models
 {
@@ -16,7 +17,9 @@ namespace Models
         }
         public static void UpgradeUser()
         {
+            var storage = new Data2();
             CurrentSession.User.AccountType = AccountType.Premium;
+            storage.Update(CurrentSession.User);
             Console.WriteLine("You were successfully upgraded to premium!");
         }
         public static decimal GetRating(string msg)
@@ -63,7 +66,7 @@ namespace Models
         public static string GetVideoTrainings()
         {
             string result = string.Empty;
-            foreach (var video in Data.VideoTrainings) result += $"(ID: {video.Id})\t[{video.Title}]\n";
+            foreach (var video in Data2.VideoTrainings) result += $"(ID: {video.Id})\t[{video.Title}]\n";
             return result;
         }
     }
