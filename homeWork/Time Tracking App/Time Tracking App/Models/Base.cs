@@ -36,7 +36,7 @@
         }
         private void SetAge(int age)
         {
-            if (age < 18 || age > 120) throw new ArgumentException("You can't create an account if your under the age of 18 or over the age of 120!");
+            if (age < 18 || age > 120) throw new ArgumentException("You can't create an account if you're under the age of 18 or over the age of 120!");
             Age = age;
         }
         private bool CheckName(string name)

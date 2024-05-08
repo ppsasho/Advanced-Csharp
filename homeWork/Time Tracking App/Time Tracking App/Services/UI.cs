@@ -321,12 +321,14 @@ namespace Services
                 switch(UserServices.GetInput("Would you like to:\n1) Change your first name\n2) Change your last name\n3) Change your password\n4) Deactivate account\n5) Go back"))
                 {
                     case "1":
+                        Console.WriteLine($"Your current name: {CurrentSession.CurrentUser.FirstName}");
                         CurrentSession.CurrentUser?.ChangeFirstName(UserServices.GetInput("Enter your new first name:"));
                         _storage.Users.Update(CurrentSession.CurrentUser);
                         ConsoleSuccess("First name changed successfully!");
                         break;
 
                     case "2":
+                        Console.WriteLine($"Your current last name: {CurrentSession.CurrentUser.LastName}");
                         CurrentSession.CurrentUser?.ChangeLastName(UserServices.GetInput("Enter your new last name:"));
                         _storage.Users.Update(CurrentSession.CurrentUser);
                         ConsoleSuccess("Last name changed successfully!");
@@ -370,7 +372,7 @@ namespace Services
             ConsoleSuccess(Greet());
             while (true)
             {
-                switch(UserServices.GetInput("What activity would you like to view?\n1) Reading\n2) Exercising\n3) Working\n4) Hobbies\n5) Go back"))
+                switch(UserServices.GetInput("What activity would you like to view?\n1) Reading\n2) Exercising\n3) Working\n4) Hobbies\n5) Global\n6) Go back"))
                 {
                     case "1":
                         return ReadingInfo();
@@ -385,14 +387,25 @@ namespace Services
                         return HobbiesInfo();
 
                     case "5":
+                        return GlobalInfo();
+                    case "6":
                         Console.Clear();
                         return LogIn();
-
                     default:
                         DefaultOption();
                         continue;
                 }
             }
+        }
+
+        private bool GlobalInfo()
+        {
+            Console.Clear();
+            Console.WriteLine($"Total time of all activities: {CurrentSession.CurrentUser.GetGlobalTime()} hours");
+            Console.WriteLine($"Favorite activity: {CurrentSession.CurrentUser.GetFavoriteActivity()}");
+
+            UserServices.PressEnterToGoBack();
+            return LogIn();
         }
 
         private bool HobbiesInfo()
@@ -408,9 +421,9 @@ namespace Services
         private bool WorkingInfo()
         {
             Console.Clear();
-            Console.WriteLine($"Total Working time: {CurrentSession.CurrentUser.TotalWorkingTime()} hours");
-            Console.WriteLine($"Avarage working time:  {CurrentSession.CurrentUser.AvgWorkingTime()} minutes");
-            Console.WriteLine($"Favorite working type: {CurrentSession.CurrentUser.FavoriteWorkingType()}");
+            Console.WriteLine($"Total Working time: {CurrentSession.CurrentUser.GetTotalWorkingTime()} hours");
+            Console.WriteLine($"Avarage working time:  {CurrentSession.CurrentUser.GetAvgWorkingTime()} minutes");
+            Console.WriteLine($"Favorite working type: {CurrentSession.CurrentUser.GetFavoriteWorkingType()}");
 
             UserServices.PressEnterToGoBack();
             Console.Clear();
@@ -420,9 +433,9 @@ namespace Services
         private bool ExercisingInfo()
         {
             Console.Clear();
-            Console.WriteLine($"Total exercising time: {CurrentSession.CurrentUser.TotalExercisingTime()} hours");
-            Console.WriteLine($"Avarage exercising time: {CurrentSession.CurrentUser.AvgExercisingTime()} minutes");
-            Console.WriteLine($"Favorite type: {CurrentSession.CurrentUser.FavoriteExercisingType()}");
+            Console.WriteLine($"Total exercising time: {CurrentSession.CurrentUser.GetTotalExercisingTime()} hours");
+            Console.WriteLine($"Avarage exercising time: {CurrentSession.CurrentUser.GetAvgExercisingTime()} minutes");
+            Console.WriteLine($"Favorite type: {CurrentSession.CurrentUser.GetFavoriteExercisingType()}");
 
             UserServices.PressEnterToGoBack();
             return LogIn();
@@ -431,9 +444,10 @@ namespace Services
         private bool ReadingInfo()
         {
             Console.Clear();
-            Console.WriteLine($"Total reading time: {CurrentSession.CurrentUser.TotalReadingTime()} hours");
-            Console.WriteLine($"Avarage reading time: {CurrentSession.CurrentUser.AvgReadingTime()} minutes");
+            Console.WriteLine($"Total reading time: {CurrentSession.CurrentUser.GetTotalReadingTime()} hours");
+            Console.WriteLine($"Avarage reading time: {CurrentSession.CurrentUser.GetAvgReadingTime()} minutes");
             Console.WriteLine($"Total pages: {CurrentSession.CurrentUser.GetTotalPages()}");
+            Console.WriteLine($"Favorite reading type: {CurrentSession.CurrentUser.GetFavoriteReadingType()}");
 
             UserServices.PressEnterToGoBack();
             return LogIn();
