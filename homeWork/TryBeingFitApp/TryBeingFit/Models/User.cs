@@ -7,7 +7,7 @@ namespace Models
         public string FirstName {  get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
-        private string Password { get; set; }
+        public string Password { get; set; }
         public AccountType AccountType { get; set; }
 
         public User(string firstName, string lastName, string username, string password, AccountType accountType)
