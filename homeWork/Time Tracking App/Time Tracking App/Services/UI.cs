@@ -77,7 +77,7 @@ namespace Services
                 }
                 catch(Exception ex)
                 {
-                    ConsoleError($"{ex}");
+                    ConsoleError($"{ex.Message}");
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace Services
                 }
                 catch(Exception ex)
                 {
-                    ConsoleError(ex.ToString());
+                    ConsoleError(ex.Message);
                 }
             }
             ConsoleError("You failed to sign in 3 times!\nPlease try again later.");
