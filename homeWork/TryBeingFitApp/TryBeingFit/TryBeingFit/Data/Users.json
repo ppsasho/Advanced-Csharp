@@ -1,0 +1,1 @@
+{"$type":"System.Collections.Generic.List`1[[Models.User, Models]], System.Private.CoreLib","$values":[{"$type":"Models.StandardUser, Models","FirstName":"Sasho","LastName":"Popovski","Username":"ppsasho","Password":"ppsasho1","AccountType":2}]}

@@ -142,7 +142,7 @@ namespace Storage
             JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
             string content = JsonConvert.SerializeObject(users, settings);
 
-            using(var sw = new StringWriter()) 
+            using(var sw = new StreamWriter(filePath)) 
             {
                 sw.WriteLine(content);
             }

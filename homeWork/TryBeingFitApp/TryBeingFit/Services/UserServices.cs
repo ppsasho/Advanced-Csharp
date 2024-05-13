@@ -15,13 +15,6 @@ namespace Models
                 Console.WriteLine("Please don't leave empty inputs!");
             }
         }
-        public static void UpgradeUser()
-        {
-            var storage = new Data2();
-            CurrentSession.User.AccountType = AccountType.Premium;
-            storage.Update(CurrentSession.User);
-            Console.WriteLine("You were successfully upgraded to premium!");
-        }
         public static decimal GetRating(string msg)
         {
             while (true)

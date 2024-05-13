@@ -6,7 +6,8 @@ namespace TryBeingFit
     {
         static void Main(string[] args)
         {
-            while (!CMD.UI());
+            var ui = new CMD();
+            while (!ui.UI());
         }
     }
 }

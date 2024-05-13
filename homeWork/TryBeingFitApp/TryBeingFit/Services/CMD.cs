@@ -3,18 +3,18 @@ using Storage;
 
 namespace Models
 {
-    public static class CMD
+    public class CMD
     {
-        public static void DefaultOption()
+        private readonly Data2 _storage = new();
+        public void DefaultOption()
         {
             Console.Clear();
             Console.WriteLine("Please make sure you choose one of the options.");
         }
 
-        public static string GetLiveTrainings()
+        public string GetLiveTrainings()
         {
-            var storage = new Data2();
-            var liveTrainings = storage.ReadLiveTrainings();
+            var liveTrainings = _storage.ReadLiveTrainings();
             if (!liveTrainings.Any())
             {
                 Console.WriteLine($"There are no live trainings scheduled, please check again later.");
@@ -35,11 +35,10 @@ namespace Models
             foreach (var training in liveTrainings) result += $"\n(ID: {training.Id})\t[{training.Title}] {training.GetRemainingTime()}\n";
             return result;
         }
-        public static bool MoreLiveInfo()
+        public bool MoreLiveInfo()
         {
             User user = CurrentSession.User;
-            var storage = new Data2();
-            var liveTrainings = storage.ReadLiveTrainings();
+            var liveTrainings = _storage.ReadLiveTrainings();
             while (true)
             {
                 int id = UserServices.GetNumber("Enter the id of the live training that you want to participate in:");
@@ -55,7 +54,7 @@ namespace Models
                 {
                     case "1":
                         liveTrainings[liveTrainings.IndexOf(live)].Participants.Add(user);
-                        storage.Update(live);
+                        _storage.Update(live);
                         Console.Clear();
                         Console.WriteLine("You have been added to the live training successfully!");
                         return LiveTrain();
@@ -69,7 +68,7 @@ namespace Models
 
             }
         }
-        public static bool LiveTrain()
+        public bool LiveTrain()
         {
             User user = CurrentSession.User;
             while (true)
@@ -105,10 +104,9 @@ namespace Models
         }
 
         
-        public static bool CreateLiveTraining()
+        public bool CreateLiveTraining()
         {
             User trainer = CurrentSession.User;
-            var storage = new Data2();
             while (true)
             {
                 string title = UserServices.GetInput("Enter the title for your training:");
@@ -116,7 +114,7 @@ namespace Models
                 DateTime date = UserServices.GetDateTime("Enter the date for your live training(dd/MM/yyyy HH:mm:ss):");
 
                 LiveTraining live = new(link, title, date, trainer);
-                storage.AddLive(live);
+                _storage.AddLive(live);
                 switch (UserServices.GetInput("Would you like to:\n1) Create another live training\n2) Go back to your profile"))
                 {
                     case "1":
@@ -131,11 +129,10 @@ namespace Models
                 }
             }
         }
-        public static bool RescheduleTraining()
+        public bool RescheduleTraining()
         {
             User trainer = CurrentSession.User;
-            var storage = new Data2();
-            var liveTrainings = storage.ReadLiveTrainings();
+            var liveTrainings = _storage.ReadLiveTrainings();
             while (true)
             {
                 var trainerLiveTrainings = liveTrainings.Where(x => x.Trainer.Username.Equals(trainer.Username));
@@ -162,7 +159,7 @@ namespace Models
                 }
                 LiveTraining live = trainerLiveTrainings.First(x => x.Id.Equals(id));
                 liveTrainings[liveTrainings.IndexOf(live)].ReSchedule(UserServices.GetDateTime("Enter the new date for your training.\nPlease follow this format (dd/MM/yyyy HH:mm:ss):"));
-                storage.Update(live);
+                _storage.Update(live);
                 Console.WriteLine("Training successfully rescheduled");
                 switch (UserServices.GetInput("Would you like to:\n1) Reschula a live training again\n2) Go back to your profile"))
                 {
@@ -177,7 +174,7 @@ namespace Models
                 }
             }
         }
-        public static bool UI()
+        public bool UI()
         {
             Console.WriteLine("Welcome to Try Being Fit!");
             switch (UserServices.GetInput("Are you a:\n1) User\n2) Trainer"))
@@ -208,18 +205,18 @@ namespace Models
         }
         
 
-        public static bool DefaultMessage()
+        public bool DefaultMessage()
         {
             DefaultOption();
             return false;
         }
         
-        public static string Welcome()
+        public string Welcome()
         {
             return $"Welcome {CurrentSession.User.FirstName}!";
         }
 
-        public static bool StandardLogIn()
+        public bool StandardLogIn()
         {
             User user = CurrentSession.User;
             while (true)
@@ -232,7 +229,7 @@ namespace Models
                         return VideoTrain();
                     case "2":
                         Console.Clear();
-                        UserServices.UpgradeUser();
+                        UpgradeUser();
                         return PremiumLogIn();
                     case "3":
                         Console.WriteLine(user.Account());
@@ -258,8 +255,14 @@ namespace Models
                 }
             }
         }
+        public void UpgradeUser()
+        {
+            CurrentSession.User.AccountType = AccountType.Premium;
+            _storage.Update(CurrentSession.User);
+            Console.WriteLine("You were successfully upgraded to premium!");
+        }
 
-        public static bool PremiumLogIn()
+        public bool PremiumLogIn()
         {
             User user = CurrentSession.User;
             while (true)
@@ -306,11 +309,11 @@ namespace Models
                 }
             }
         }
-        public static bool StartLiveTraining()
+        public bool StartLiveTraining()
         {
             User trainer = CurrentSession.User;
             var storage = new Data2();
-            var liveTrainings = storage.ReadLiveTrainings();
+            var liveTrainings = _storage.ReadLiveTrainings();
             var trainerTrainings = liveTrainings.Where(x => x.Trainer.Username.Equals(trainer.Username)).ToList();
             while (true)
             {
@@ -343,7 +346,7 @@ namespace Models
                 Console.WriteLine("Live training started.");
                 Console.WriteLine(live.GetInfo());
                 liveTrainings.Remove(live);
-                storage.SaveItems(liveTrainings);
+                _storage.SaveItems(liveTrainings);
                 switch (UserServices.GetInput("Would you like to:\n1) Go back to your profile\n2) Start another live training"))
                 {
                     case "1":
@@ -356,7 +359,7 @@ namespace Models
                 }
             }
         }
-        public static bool TrainerLogIn()
+        public bool TrainerLogIn()
         {
             User trainer = CurrentSession.User;
             while (true)
@@ -407,10 +410,9 @@ namespace Models
             }
         }
 
-        public static bool Register()
+        public bool Register()
         {
-            var storage = new Data2();
-            var users = storage.ReadUsers();
+            var users = _storage.ReadUsers();
             while (true)
             {
                 string firstName = UserServices.GetInput("Enter your first name:");
@@ -435,7 +437,7 @@ namespace Models
                         continue;
                     }
                     User user = new StandardUser(firstName, lastName, username, UserServices.GetInput("Enter your new password (Make sure theres at least 6 characters including a number)"));
-                    storage.AddUser(user);
+                    _storage.AddUser(user);
                     Console.WriteLine("User successfully created!");
                     switch (UserServices.GetInput("Would you like to login with your new account? (Y N)").ToUpper())
                     {
@@ -451,7 +453,7 @@ namespace Models
 
             }
         }
-        public static bool MoreVideoInfo(VideoTraining video)
+        public bool MoreVideoInfo(VideoTraining video)
         {
             User user = CurrentSession.User;
             while (true)
@@ -475,7 +477,7 @@ namespace Models
                 }
             }
         }
-        public static bool VideoTrain()
+        public bool VideoTrain()
         {
             User user = CurrentSession.User;
             while (true)
@@ -516,12 +518,11 @@ namespace Models
             }
         }
 
-        public static bool SignIn(string accountType)
+        public bool SignIn(string accountType)
         {
             while (true)
             {
-                var storage = new Data2();
-                var users = storage.ReadUsers();
+                var users = _storage.ReadUsers();
                 string username = UserServices.GetInput("Enter your username:");
                 if (username.Length < 6)
                 {
