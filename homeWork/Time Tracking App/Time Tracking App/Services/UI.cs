@@ -343,7 +343,9 @@ namespace Services
                     case "4":
                         CurrentSession.CurrentUser.DeactivateAccount();
                         _storage.Users.Update(CurrentSession.CurrentUser);
-                        break;
+                        CurrentSession.Remove();
+                        ConsoleSuccess("Account disabled successfully");
+                        return Welcome();
 
                     case "5":
                         Console.Clear();
