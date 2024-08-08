@@ -1,5 +1,3 @@
-Certainly! Here's the revised version without the mentions of "bonus" or "homework":
-
 # **⏳ Time Tracking App**
 
 Time is one of the most valuable resources we have. Whether we're learning, working, or spending time with friends, everything is done in increments of time. Organizing and tracking how we use our time can greatly enhance productivity. This app is designed to help users track the time they spend on various activities, save that data, and compile statistics for insightful analysis.
