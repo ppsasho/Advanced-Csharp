@@ -97,7 +97,3 @@ Time is one of the most valuable resources we have. Whether we're learning, work
 ### **Save Progress**
 
 - The application saves user progress, ensuring that all data remains intact even when the app is closed and reopened.
-
----
-
-This version gives users a clear understanding of the time tracking app's features and how to use it effectively without the extra references.
